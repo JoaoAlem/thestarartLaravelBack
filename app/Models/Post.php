@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\CompressedBinaryCast;
 use Illuminate\Database\Eloquent\Casts\AsBinary;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,7 +23,6 @@ class Post extends Model
     {
         return [
             'uuid' => AsBinary::uuid(),
-            'content' => CompressedBinaryCast::class,
             'tags' => 'array'
         ];
     }

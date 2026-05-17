@@ -12,12 +12,12 @@ return new class extends Migration {
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->binary('id', length: 16, fixed: true)->primary();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreignId('user_id')->nullable()->references('id')->on('users');
             $table->string('guid')->unique()->autoIncrement();
             $table->string('title');
             $table->string('slug');
             $table->text('excerpt');
-            $table->binary('content');
+            $table->longText('content')->nullable();
             $table->json('tags')->nullable();
             $table->timestamp('publish_date');
             $table->tinyInteger('visibility', unsigned: true); // Talvez tenhamos posts vísiveis (1) para todos e visíveis somente para usuários logados (2)
@@ -25,8 +25,14 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->fullText(['title, slug, excerpt, content, tags']);
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->fullText(['title', 'slug', 'excerpt'], 'posts_fulltext_en')
+                ->language('english');
+
+            $table->fullText(['title', 'slug', 'excerpt'], 'posts_fulltext_pt')
+                ->language('portuguese');
+
+            $table->fullText(['title', 'slug', 'excerpt'], 'posts_fulltext_es')
+                ->language('spanish');
         });
     }
 
