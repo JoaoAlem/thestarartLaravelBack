@@ -7,6 +7,9 @@ use Hash;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
+use Throwable;
 
 #[Signature('user:create {name} {email} {password}')]
 #[Description('Cria um usuário')]
@@ -21,12 +24,28 @@ class CreateUserCommand extends Command
         $password = $this->argument('password');
         $email = $this->argument('email');
 
-        $user = (new User())->create([
-            'name'=> $userName,
-            'email'=> $email,
-            'password'=> Hash::make($password),
-        ]);
+        try {
+            Validator::validate([
+                'name' => $userName,
+                'password' => $password,
+                'email' => $email,
+            ], [
+                'password' => Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+            ]);
 
-        $this->info("Usuário criado com sucesso {$user->id}");
+            $user = (new User)->create([
+                'name' => $userName,
+                'email' => $email,
+                'password' => Hash::make($password),
+            ]);
+            $this->info("Usuário criado com sucesso {$user->id}");
+        } catch (Throwable $e) {
+            $this->error($e->getMessage());
+        }
     }
 }
