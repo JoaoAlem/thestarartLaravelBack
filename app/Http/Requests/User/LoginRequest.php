@@ -5,6 +5,7 @@ namespace App\Http\Requests\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class LoginRequest extends FormRequest
 {
@@ -32,7 +33,15 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required', Rule::email()],
-            'password' => ['required'],
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
+            ],
             'remember_token' => ['sometimes', 'boolean'],
         ];
     }
