@@ -13,11 +13,11 @@ Route::apiResource('musics', MusicController::class);
 
 Route::prefix('posts')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('posts.index');
-    Route::get('/{id}', [PostController::class, 'index'])->name('posts.show');
+    Route::get('/{post}', [PostController::class, 'show'])->name('posts.show');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [PostController::class, 'store'])->name('posts.create');
-        Route::match(['PUT', 'PATCH'], '/posts/{id}', [PostController::class, 'update'])->name('posts.update');
-        Route::delete('/{id}', [PostController::class, 'delete'])->name('posts.delete');
+        Route::match(['PUT', 'PATCH'], '/{post}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.delete');
     });
 });

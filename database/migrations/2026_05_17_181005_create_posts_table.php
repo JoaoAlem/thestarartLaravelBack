@@ -25,13 +25,13 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->fullText(['title', 'slug', 'excerpt'], 'posts_fulltext_en')
+            $table->fullText(['title', 'slug', 'excerpt', 'content'], 'posts_fulltext_en')
                 ->language('english');
 
-            $table->fullText(['title', 'slug', 'excerpt'], 'posts_fulltext_pt')
+            $table->fullText(['title', 'slug', 'excerpt', 'content'], 'posts_fulltext_pt')
                 ->language('portuguese');
 
-            $table->fullText(['title', 'slug', 'excerpt'], 'posts_fulltext_es')
+            $table->fullText(['title', 'slug', 'excerpt', 'content'], 'posts_fulltext_es')
                 ->language('spanish');
         });
     }

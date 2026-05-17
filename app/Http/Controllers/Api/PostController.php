@@ -3,34 +3,36 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostIndexRequest;
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(PostIndexRequest $request)
     {
-        $queryParams = $request->validate([
-            "search" => ["nullable", "string", "max:255"],
-            "page" => ["integer", "min:1"],
-            "perPage" => ["sometimes", "integer", "max:100"],
-            "order" => ["string", Rule::in(["asc", "desc"])],
-            "lang" => ["string", Rule::in(["pt", "en", "es"])]
-        ]);
+        $queryParams = $request->validated();
 
-        $posts = Post::query()
-            ->when($queryParams["search"], fn($query) => $query->whereFullText(['title, slug, excerpt, content, tags'], $queryParams['search']))
-            ->when($queryParams["page"], fn($query) => $query->paginate($queryParams["perPage"] ?? 10, page: $queryParams["page"]))
-            ->when($queryParams["order"], fn($query) => $query->orderBy('publish_date', $queryParams['order']))
-            ->where("lang", $queryParams["lang"] ?? 'pt')
-            ->where('publish_date < now()')
-            ->get();
+        $query = Post::query()
+            ->when(
+                $queryParams['search'] ?? null,
+                fn($query, $search) => $query->whereFullText(['title', 'slug', 'excerpt', 'content'], $search)
+            )
+            ->when(
+                $queryParams['order'] ?? null,
+                fn($query, $order) => $query->orderBy('publish_date', $order)
+            )
+            ->where('lang', $queryParams['lang'] ?? 'pt')
+            ->where('publish_date', '<=', now());
+
+        $posts = $query->paginate(
+            $queryParams['perPage'] ?? 10,
+            page: $queryParams['page'] ?? 1
+        );
 
         return PostResource::collection($posts);
     }
