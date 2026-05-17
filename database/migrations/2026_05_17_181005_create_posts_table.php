@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->binary('id', length: 16, fixed: true)->primary();
+            $table->uuid('id')->primary();
             $table->foreignId('user_id')->nullable()->references('id')->on('users');
             $table->string('guid')->unique()->autoIncrement();
             $table->string('title');
