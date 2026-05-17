@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Music;
 use App\Http\Resources\MusicResource;
 use App\Http\Requests\MusicRequest;
-use Illuminate\Http\Request;
 
 class MusicController extends Controller
 {
