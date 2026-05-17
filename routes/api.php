@@ -9,7 +9,7 @@ Route::prefix('user')->group(function () {
     Route::post('/login', [UserController::class, 'login'])->name('user.login');
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/', fn (Request $request) => $request->user());
+        Route::get('/', fn(Request $request) => $request->user());
     });
 });
 
