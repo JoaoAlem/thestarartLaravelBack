@@ -13,10 +13,10 @@ class UserController extends Controller
         [
             'email' => $email,
             'password' => $password,
-            'remember' => $rememberToken
+            'remember_token' => $rememberToken
         ] = $request->validated();
 
-        if (! Auth::attempt(['email' => $email, 'password' => $password], $rememberToken)) {
+        if (!Auth::attempt(['email' => $email, 'password' => $password], $rememberToken)) {
             return response()->json([
                 'error' => 'E-mail ou senha incorretos.',
             ], 401);

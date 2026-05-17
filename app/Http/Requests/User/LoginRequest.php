@@ -33,15 +33,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required', Rule::email()],
-            'password' => [
-                'required',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised()
-            ],
+            'password' => ['required', 'string'],
             'remember_token' => ['sometimes', 'boolean'],
         ];
     }
