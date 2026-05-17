@@ -10,6 +10,7 @@ Route::prefix('user')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', fn(Request $request) => $request->user());
+        Route::post('/logout', [UserController::class, 'logout'])->name('user.logout');
     });
 });
 
