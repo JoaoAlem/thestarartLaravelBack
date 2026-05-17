@@ -1,11 +1,16 @@
 <?php
 
+use App\Http\Controllers\Api\MusicController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\MusicController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::prefix('user')->group(function () {
+    Route::post('/login', [UserController::class, 'login'])->name('user.login');
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', fn (Request $request) => $request->user());
+    });
+});
 
 Route::apiResource('musics', MusicController::class);
