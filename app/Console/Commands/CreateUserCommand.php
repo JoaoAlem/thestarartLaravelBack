@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Throwable;
 
-#[Signature('user:create {name} {email} {password}')]
+#[Signature('user:create {name} {email}')]
 #[Description('Cria um usuário')]
 class CreateUserCommand extends Command
 {
@@ -21,22 +21,34 @@ class CreateUserCommand extends Command
     public function handle()
     {
         $userName = $this->argument('name');
-        $password = $this->argument('password');
         $email = $this->argument('email');
+        $password = $this->secret('Digite a senha');
 
         try {
             Validator::validate([
-                'name' => $userName,
-                'password' => $password,
-                'email' => $email,
-            ], [
-                'password' => Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised(),
-            ]);
+                    'name' => $userName,
+                    'password' => $password,
+                    'email' => $email,
+                ],
+                [
+                    'name' => [
+                        'required',
+                        'string',
+                        'min:2',
+                        'max:255',
+                    ],
+                    'email' => [
+                        'required',
+                        'email',
+                        'unique:users,email'
+                    ],
+                    'password' => Password::min(8)
+                        ->letters()
+                        ->mixedCase()
+                        ->numbers()
+                        ->symbols()
+                        ->uncompromised(),
+                ]);
 
             $user = (new User)->create([
                 'name' => $userName,
@@ -49,3 +61,4 @@ class CreateUserCommand extends Command
         }
     }
 }
+
